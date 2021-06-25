@@ -580,7 +580,7 @@ export default configMerger(walttiConfig, {
     },
     staticMessagesUrl: STATIC_MESSAGE_URL,
 
-    suggestCarMinDistance: 800,
+    suggestCarMinDistance: 1000,
     suggestWalkMaxDistance: 3000,
     suggestBikeAndPublicMinDistance: 3000,
     suggestBikeAndParkMinDistance: 3000,
