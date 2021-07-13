@@ -302,7 +302,6 @@ const withRelay = createFragmentContainer(ItineraryTab, {
       duration
       startTime
       endTime
-      arrivedAtDestinationWithRentedBicycle
       fares {
         cents
         components {
@@ -419,20 +418,7 @@ const withRelay = createFragmentContainer(ItineraryTab, {
             carParkId
             name
           }
-          vehicleParkingWithEntrance {
-            vehicleParking {
-              tags
-            }
-          }
-        }
-        dropOffBookingInfo {
-          message
-          dropOffMessage
-          contactInfo {
-            phoneNumber
-            infoUrl
-            bookingUrl
-          }
+
         }
         legGeometry {
           length

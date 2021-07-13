@@ -6394,28 +6394,6 @@
                 },
                 {
                     "kind": "OBJECT",
-                    "name": "VehicleParkingWithEntrance",
-                    "description": "Vehicle parking information",
-                    "fields": [
-                        {
-                            "name": "vehicleParking",
-                            "args": [],
-                            "type": {
-                                "kind": "OBJECT",
-                                "name": "VehicleParking",
-                                "ofType": null
-                            },
-                            "isDeprecated": false,
-                            "deprecationReason": null
-                        }
-                    ],
-                    "inputFields": null,
-                    "interfaces": [],
-                    "enumValues": null,
-                    "possibleTypes": null
-                },
-                {
-                    "kind": "OBJECT",
                     "name": "RentalUris",
                     "description": "Rental URI",
                     "fields": [
@@ -6976,18 +6954,6 @@
                             },
                             "isDeprecated": false,
                             "deprecationReason": null
-                        },
-                        {
-                            "name": "vehicleParkingWithEntrance",
-                            "description": "Get vehicle parking information",
-                            "args": [],
-                            "type": {
-                                "kind": "OBJECT",
-                                "name": "VehicleParkingWithEntrance",
-                                "ofType": null
-                            },
-                            "isDeprecated": false,
-                            "deprecationReason": null
                         }
                     ],
                     "inputFields": null,
@@ -7041,18 +7007,7 @@
                     "name": "Itinerary",
                     "description": null,
                     "fields": [
-                        {
-                            "name": "arrivedAtDestinationWithRentedBicycle",
-                            "description": "Whether arrival at destination with rented bike.",
-                            "args": [],
-                            "type": {
-                                "kind": "SCALAR",
-                                "name": "Boolean",
-                                "ofType": null
-                            },
-                            "isDeprecated": false,
-                            "deprecationReason": null
-                        },
+
                         {
                             "name": "startTime",
                             "description": "Time when the user leaves from the origin. Format: Unix timestamp in milliseconds.",
@@ -7504,18 +7459,6 @@
                                     "name": "step",
                                     "ofType": null
                                 }
-                            },
-                            "isDeprecated": false,
-                            "deprecationReason": null
-                        },
-                        {
-                            "name": "dropOffBookingInfo",
-                            "description": "Information about the booking for this itinerary",
-                            "args": [],
-                            "type": {
-                                "kind": "OBJECT",
-                                "name": "bookingInfo",
-                                "ofType": null
                             },
                             "isDeprecated": false,
                             "deprecationReason": null
