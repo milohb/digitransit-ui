@@ -1,0 +1,26 @@
+.connector-container {
+  div {
+    font-size: 13px;
+    display: flex;
+    flex-direction: row;
+    color: #666666;
+  }
+}
+
+.connector-icon {
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.direct-deep-link {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 26px 10px 26px;
+
+  .icon-container {
+    display: flex;
+    align-self: center;
+  }
+}
