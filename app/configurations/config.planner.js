@@ -211,7 +211,7 @@ export default configMerger(walttiConfig, {
     //     carpool: 'CARPOOL',
     // },
 
-    logo: 'planner/rainbow-logo-hb.svg',
+    logo: 'planner/bus-15.svg',
 
     GTMid: '',
 
