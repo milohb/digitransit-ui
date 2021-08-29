@@ -62,23 +62,14 @@ class MarkerPopupBottom extends React.Component {
 
   /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
   render() {
-    const reportButton = this.props.reporterUrl ? (
-      <div onClick={() => this.reportDefect()} className="route cursor-pointer">
-        <FormattedMessage id="report-defect" defaultMessage="Report defect" />
-      </div>
-    ) : null;
 
     return (
       <div className="bottom location">
         <div onClick={() => this.routeFrom()} className="route cursor-pointer">
           <FormattedMessage
-            id="route-from-here"
-            defaultMessage="Route from here"
+            id="route-from-here" defaultMessage="Route from here"
           />
         </div>
-
-        {reportButton}
-
         <div onClick={() => this.routeTo()} className="route cursor-pointer">
           <FormattedMessage id="route-here" defaultMessage="Route here" />
         </div>
