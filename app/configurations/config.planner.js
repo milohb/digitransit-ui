@@ -59,7 +59,7 @@ export default configMerger(walttiConfig, {
     /* disable the "next" column of the Route panel as it can be confusing sometimes: https://github.com/stadtnavi/digitransit-ui/issues/167 */
     displayNextDeparture: true,
     // maxWalkDistance: 15000, from Herrenberg
-    maxWalkDistance: 2000,
+    maxWalkDistance: 5000,
 
     optimize: "TRIANGLE",
 
@@ -71,7 +71,8 @@ export default configMerger(walttiConfig, {
     },
 
     defaultOptions: {
-        walkSpeed: [0.83, 1.38, 1.94],
+        // 2 / 4 / 6 km/h, values im m/s
+        walkSpeed: [0.55, 1.11, 1.67],
     },
 
     itinerary: {
@@ -237,9 +238,7 @@ export default configMerger(walttiConfig, {
             }
         },
         attribution: {
-            'default': '© <a tabindex=-1 href=http://osm.org/copyright>OpenStreetMap Mitwirkende</a>, <a tabindex=-1 href=https://www.nvbw.de/aufgaben/digitale-mobilitaet/open-data/>Datensätze der NVBW GmbH</a> und <a tabindex=-1 href=https://www.openvvs.de/dataset/gtfs-daten>VVS GmbH</a>',
-            'satellite': '© <a tabindex=-1 href=http://osm.org/copyright>OpenStreetMap Mitwirkende</a>, © <a tabindex=-1 href="https://www.lgl-bw.de/">LGL BW</a>, <a tabindex=-1 href=https://www.nvbw.de/aufgaben/digitale-mobilitaet/open-data/>Datensätze der NVBW GmbH</a> und <a tabindex=-1 href=https://www.openvvs.de/dataset/gtfs-daten>VVS GmbH</a>',
-            'bicycle': '© <a tabindex=-1 href=http://osm.org/copyright>OpenStreetMap Mitwirkende</a>, © <a tabindex=-1 href=https://www.cyclosm.org/#map=12/52.3728/4.8936/cyclosmx>CyclOSM</a>, © <a tabindex=-1 href="https://www.openstreetmap.fr/">OSM-FR</a>, <a tabindex=-1 href=https://www.nvbw.de/aufgaben/digitale-mobilitaet/open-data/>Datensätze der NVBW GmbH</a> und <a tabindex=-1 href=https://www.openvvs.de/dataset/gtfs-daten>VVS GmbH</a>',
+            'default': '© <a tabindex=-1 href=https://www.maptiler.com/copyright/>MapTiler</a>, <a tabindex=-1 href=http://osm.org/copyright>OpenStreetMap Mitwirkende</a>,  <a tabindex=-1 href=https://www.vbn.de/service/entwicklerinfos/>Verkehrsverbund Bremen/Niedersachsen GmbH</a> und <a tabindex=-1 href=https://www.connect-fahrplanauskunft.de/index.php?id=opendata>connect OpenData</a>'
         },
     },
 
@@ -308,16 +307,6 @@ export default configMerger(walttiConfig, {
                 route: '/dieser-dienst',
                 icon: 'icon-icon_info',
             },
-            {
-                name: 'imprint',
-                nameEn: 'Imprint',
-                href: 'https://www.herrenberg.de/impressum',
-            },
-            {
-                name: 'privacy',
-                nameEn: 'Privacy',
-                href: 'https://www.herrenberg.de/datenschutz',
-            },
         ],
     },
 
@@ -326,31 +315,33 @@ export default configMerger(walttiConfig, {
             {
                 header: 'Über diesen Dienst',
                 paragraphs: [
-                    'stadtnavi ist eine Reiseplanungs-Anwendung für die Stadt Herrenberg und Umgebung. Dieser Dienst umfasst ÖPNV, Fußwege, Radverkehr, Straßen- und Parkplatzinformationen, Ladeinfrastruktur und Sharing-Angebote. Mobilitätsangebote werden durch intermodales Routing miteinander vernetzt.',
-                    'Gefördert durch <br>',
-                    '<a href="https://www.herrenberg.de/stadtluft"><img src="https://www.herrenberg.de/ceasy/resource/?id=4355&predefinedImageSize=rightEditorContent"/></a>',
+                    'planner.25stunden.de ist die Demonstrationsseite für eine Fahrplanauskunft für den ÖPNV mit OpenSource-Programmen und basierend auf offenen Daten.',
+                    'Die Seite wird realisiert als Bachelorarbeit von Michael Lorenzen im Studiengang <a href=https://www.hs-kl.de/informatik-und-mikrosystemtechnik/studiengaenge/it-analyst>IT-Analyst</a> an der <a href=https://www.hs-kl.de/>Hochschule Kaiserslautern</a>',
 
                 ],
             },
             {
-                header: 'Mitmachen',
-                paragraphs: [
-                    'Die Stadt Herrenberg hat diese App im Rahmen der Modellstadt, gefördert durch das Bundesministerium für Verkehr und digitale Infrastruktur (BMVI) entwickelt. stadtnavi Anwendung ist eine Open Source Lösung und kann von anderen Kommunen und Akteuren unter ihrem Namen und Erscheinungsbild verwendet und an individuelle Bedürfnisse angepasst und weiterentwickelt werden (White Label Lösung). Mitmachen ist gewünscht!',
-                ]
-            },
-            {
                 header: 'Digitransit Plattform',
                 paragraphs: [
-                    'Dieser Dienst basiert auf der Digitransit Platform und dem Backend-Dienst OpenTripPlanner. Alle Software ist unter einer offenen Lizenzen verfügbar. Vielen Dank an alle Beteiligten.',
-                    'Der gesamte Quellcode der Plattform, die aus vielen verschiedenen Komponenten besteht, ist auf <a href="https://github.com/stadtnavi/">Github</a> verfügbar.'
+                    'Dieser Dienst basiert auf der Digitransit Plattform und dem Backend-Diensten OpenTripPlanner, tileserver-gl, Photon und pelias-photon-adapter. Alle Software ist unter einer offenen Lizenzen verfügbar. Vielen Dank an alle Beteiligten.',
+                    'Der gesamte Quellcode der Plattform, die aus vielen verschiedenen Komponenten besteht, ist auf <a href="https://github.com/milohb/">Github</a> verfügbar.'
                 ],
             },
             {
                 header: 'Datenquellen',
                 paragraphs: [
                     'Kartendaten: © <a target=new href=https://www.openstreetmap.org/>OpenStreetMap Mitwirkende</a>',
-                    'ÖPNV-Daten: Datensätze der <a target=new href=https://www.nvbw.de/aufgaben/digitale-mobilitaet/open-data/>NVBW GmbH</a> und der <a target=new href=https://www.openvvs.de/dataset/gtfs-daten>VVS GmbH</a>, Shapes (d.h. Geometrien der Streckenverläufe) jeweils angereichert mit OpenStreetMap-Daten © OpenStreetMap Mitwirkende',
+                    'ÖPNV-Daten: Datensätze der <a target=new href=https://www.vbn.de/service/entwicklerinfos>Verkehrsverbund Bremen/Niedersachsen GmbH</a> und der <a target=new href=https://www.connect-fahrplanauskunft.de/index.php?id=opendata>Connect Fahrplanauskunft Gmbh</a>, Shapes (d.h. Geometrien der Streckenverläufe) jeweils angereichert mit OpenStreetMap-Daten © OpenStreetMap Mitwirkende', 'Kartenkacheln von <a href=https://www.maptiler.com/copyright/>MapTiler</a>',
                     'Alle Angaben ohne Gewähr.'
+                ],
+            },
+            {
+                header: 'Impressum',
+                paragraphs: [
+                    'Michael Lorenzen',
+                    'Schubertstraße 13',
+                    '28209 Bremen',
+                    'Kontakt: miloba @ m-lorenzen.de'
                 ],
             },
         ],
@@ -358,14 +349,13 @@ export default configMerger(walttiConfig, {
             {
                 header: 'About this service',
                 paragraphs: [
-                    'stadtnavi is a travel planning application for the city of Herrenberg and its surroundings. This service includes public transport, footpaths, cycling, street and parking information, charging infrastructure and sharing offerings. The mobility offerings are connected through intermodal routing.',
-                    '<a href="https://www.herrenberg.de/stadtluft"><img src="https://www.herrenberg.de/ceasy/resource/?id=4355&predefinedImageSize=rightEditorContent"/></a>',
+                    '',
                 ],
             },
             {
                 header: 'Contribute',
                 paragraphs: [
-                    'The city of Herrenberg has developed this app, funded by the Federal Ministry of Transport and Digital Infrastructure (BMVI), as model city. The stadtnavi app is an open source solution and can be used, customized and further developed by other municipalities to meet individual needs (white lable solution). Participation is welcome!',
+                    '',
                 ]
             },
             {
@@ -377,8 +367,8 @@ export default configMerger(walttiConfig, {
             {
                 header: 'Data sources',
                 paragraphs: [
-                    'Map data: © <a target=new href=https://www.openstreetmap.org/>OpenStreetMap contributors</a>',
-                    'Public transit data: Datasets by <a target=new href=https://www.nvbw.de/aufgaben/digitale-mobilitaet/open-data/>NVBW GmbH</a> and <a target=new href=https://www.openvvs.de/dataset/gtfs-daten>VVS GmbH</a>, Shapes (d.h. Geometrien der Streckenverläufe) enhanced with OpenStreetMap data © OpenStreetMap contributors',
+                    'Map data: © <a target=new href=https://www.openstreetmap.org/>OpenStreetMap Mitwirkende</a>',
+                    'Public transport data: data from  <a target=new href=https://www.vbn.de/service/entwicklerinfos>Verkehrsverbund Bremen/Niedersachsen GmbH</a> and <a target=new href=https://www.connect-fahrplanauskunft.de/index.php?id=opendata>Connect Fahrplanauskunft Gmbh</a>, Shapes enhanced with OpenStreetMap data © OpenStreetMap Mitwirkende', 'map tiles from <a href=https://www.maptiler.com/copyright/>MapTiler</a>',
                     'No responsibility is accepted for the accuracy of this information.'
                 ],
             },
