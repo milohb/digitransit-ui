@@ -1,6 +1,6 @@
 import omitBy from 'lodash/omitBy';
 import moment from 'moment';
-import cookie from 'react-cookie';
+import Cookies from 'universal-cookie';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import point from 'turf-point';
 import polygon from 'turf-polygon';
@@ -18,6 +18,7 @@ import { otpToLocation, getIntermediatePlaces } from './otpStrings';
 import { getDefaultNetworks } from './citybikes';
 import { getCustomizedSettings } from '../store/localStorage';
 import { estimateItineraryDistance } from './geo-utils';
+import { BicycleParkingFilter } from '../constants';
 
 /**
  * Retrieves the default settings from the configuration.
@@ -161,8 +162,11 @@ export const getSettings = config => {
       ),
     allowedBikeRentalNetworks: custSettings.allowedBikeRentalNetworks,
     includeBikeSuggestions: custSettings.includeBikeSuggestions,
+    includeCarSuggestions: custSettings.includeCarSuggestions,
+    includeParkAndRideSuggestions: custSettings.includeParkAndRideSuggestions,
     useCarParkAvailabilityInformation:
       custSettings.useCarParkAvailabilityInformation,
+    bicycleParkingFilter: custSettings.bicycleParkingFilter,
   };
 };
 
@@ -174,7 +178,7 @@ const getShouldMakeParkRideQuery = (
 ) => {
   return (
     linearDistance > config.suggestCarMinDistance &&
-    (settings.includeParkAndRideSuggestions
+    (settings.includeParkAndRideSuggestions !== undefined
       ? settings.includeParkAndRideSuggestions
       : defaultSettings.includeParkAndRideSuggestions)
   );
@@ -188,7 +192,7 @@ const getShouldMakeCarQuery = (
 ) => {
   return (
     linearDistance > config.suggestCarMinDistance &&
-    (settings.includeCarSuggestions
+    (settings.includeCarSuggestions !== undefined
       ? settings.includeCarSuggestions
       : defaultSettings.includeCarSuggestions)
   );
@@ -284,6 +288,16 @@ export const preparePlanParams = (config, useDefaultModes) => (
   };
   const parsedTime = time ? moment(time * 1000) : moment();
 
+  let bannedBicycleParkingTags = [];
+  let preferredBicycleParkingTags = [];
+  if (BicycleParkingFilter.FreeOnly === settings.bicycleParkingFilter) {
+    bannedBicycleParkingTags = ['osm:fee=yes'];
+  }
+  if (BicycleParkingFilter.SecurePreferred === settings.bicycleParkingFilter) {
+    preferredBicycleParkingTags = ['osm:fee=yes', 'osm:fee=some'];
+  }
+
+  const cookies = new Cookies();
   return {
     ...defaultSettings,
     ...omitBy(
@@ -293,7 +307,7 @@ export const preparePlanParams = (config, useDefaultModes) => (
         from: fromLocation,
         to: toLocation,
         intermediatePlaces: intermediatePlaceLocations,
-        numItineraries: 25,
+        numItineraries: 10,
         date: parsedTime.format('YYYY-MM-DD'),
         time: parsedTime.format('HH:mm:ss'),
         walkReluctance: settings.walkReluctance,
@@ -320,15 +334,17 @@ export const preparePlanParams = (config, useDefaultModes) => (
         disableRemainingWeightHeuristic: getDisableRemainingWeightHeuristic(
           modesOrDefault,
         ),
-        locale: locale || cookie.load('lang') || 'fi',
+        locale: locale || cookies.get('lang') || 'fi',
         useCarParkAvailabilityInformation,
         useVehicleParkingAvailabilityInformation: isDepartureTimeWithin15Minutes(
           parsedTime,
         ),
 
         bannedVehicleParkingTags: bannedVehicleParkingTags
-          ? [bannedVehicleParkingTags]
-          : [],
+          ? [bannedVehicleParkingTags].concat(
+              config.parkAndRideBannedVehicleParkingTags,
+            )
+          : config.parkAndRideBannedVehicleParkingTags,
       },
       nullOrUndefined,
     ),
@@ -379,16 +395,17 @@ export const preparePlanParams = (config, useDefaultModes) => (
       { mode: 'BICYCLE' },
       ...modesAsOTPModes(getBicycleCompatibleModes(config, modesOrDefault)),
     ],
+    bannedBicycleParkingTags,
+    preferredBicycleParkingTags,
+    unpreferredBicycleParkingTagPenalty:
+      config.unpreferredBicycleParkingTagPenalty,
     onDemandTaxiModes: [
       { mode: 'RAIL' },
       { mode: 'FLEX', qualifier: 'EGRESS' },
       { mode: 'FLEX', qualifier: 'DIRECT' },
       { mode: 'WALK' },
     ],
-    bikeParkModes: [
-      { mode: 'BICYCLE', qualifier: 'PARK' },
-      ...formattedModes,
-    ].filter(mode => mode.qualifier !== 'RENT'), // BICYCLE_RENT can't be used together with BICYCLE_PARK
+    bikeParkModes: [{ mode: 'BICYCLE', qualifier: 'PARK' }, ...formattedModes],
     carParkModes: [
       isDestinationOldTownOfHerrenberg(toLocation)
         ? { mode: 'CAR', qualifier: 'PARK' }

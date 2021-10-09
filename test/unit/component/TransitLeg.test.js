@@ -25,6 +25,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Lokkalantie',
           stop: {
@@ -88,6 +89,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Lokkalantie',
           stop: {},
@@ -163,6 +165,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Lokkalantie',
           stop: {
@@ -227,6 +230,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Lokkalantie',
           stop: {
@@ -287,6 +291,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Lokkalantie',
           stop: {},
@@ -347,6 +352,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Huopalahti',
           stop: {},
@@ -406,6 +412,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         endTime: 1553856420000,
         from: {
           name: 'Testilahti',
@@ -457,6 +464,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         endTime: 1553856420000,
         from: {
           name: 'Testilahti',
@@ -513,6 +521,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         endTime: 1553856420000,
         from: {
           name: 'Testilahti',
@@ -565,6 +574,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         endTime: 1553856420000,
         from: {
           name: 'Testilahti',
@@ -617,6 +627,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         endTime: 1553856420000,
         from: {
           name: 'Testilahti',
@@ -675,6 +686,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         fare: {
           isUnknown: true,
           agency: {
@@ -718,6 +730,7 @@ describe('<TransitLeg />', () => {
           availableTickets: { HSL: { 'HSL:A': { price: 5.5, zones: ['A'] } } },
           feedIds: ['HSL', 'HSLlautta'],
           colors: { primary: '#007ac9' },
+          hideExternalOperator: () => false,
         },
         focusFunction: () => () => {},
       },
@@ -730,6 +743,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         fare: {
           isUnknown: true,
           agency: {
@@ -773,6 +787,7 @@ describe('<TransitLeg />', () => {
           availableTickets: { HSL: { 'foo:A': { price: 5.5, zones: ['A'] } } },
           feedIds: ['HSL', 'HSLlautta'],
           colors: { primary: '#007ac9' },
+          hideExternalOperator: () => false,
         },
         focusFunction: () => () => {},
       },
@@ -786,6 +801,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Test',
           stop: {
@@ -841,6 +857,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Test',
           stop: {},
@@ -894,6 +911,7 @@ describe('<TransitLeg />', () => {
           itinerary: {},
           zones: { itinerary: true },
           colors: { primary: '#007ac9' },
+          showAlertHeader: true,
         },
         focusFunction: () => () => {},
       },
@@ -906,6 +924,7 @@ describe('<TransitLeg />', () => {
     const props = {
       ...defaultProps,
       leg: {
+        realTime: false,
         from: {
           name: 'Test',
           stop: {},
@@ -947,6 +966,7 @@ describe('<TransitLeg />', () => {
           itinerary: {},
           zones: { itinerary: true },
           colors: { primary: '#007ac9' },
+          showAlertHeader: true,
         },
         focusFunction: () => () => {},
       },

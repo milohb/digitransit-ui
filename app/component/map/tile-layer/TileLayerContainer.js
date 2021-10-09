@@ -393,16 +393,17 @@ class TileLayerContainer extends GridLayer {
           showPopup = false;
         } else if (this.state.selectableTargets[0].layer === 'bikeParks') {
           const {
-            maxCapacity,
+            // eslint-disable-next-line no-shadow
+            id,
             name,
           } = this.state.selectableTargets[0].feature.properties;
           const { lat, lng } = this.state.coords;
           const params = pickBy(
             {
+              id,
               lat,
               lng,
               name,
-              maxCapacity,
             },
             value => value !== undefined,
           );

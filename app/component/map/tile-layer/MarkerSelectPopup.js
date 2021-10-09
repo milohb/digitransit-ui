@@ -6,12 +6,10 @@ import SelectStopRow from './SelectStopRow';
 import SelectCityBikeRow from './SelectCityBikeRow';
 import SelectParkAndRideRow from './SelectParkAndRideRow';
 import SelectVehicleContainer from './SelectVehicleContainer';
-import ComponentUsageExample from '../../ComponentUsageExample';
-import { options } from '../../ExampleData';
 import SelectCarpoolRow from './SelectCarpoolRow';
 import SelectBikeParkRow from './SelectBikeParkRow';
 import SelectDynamicParkingLotsRow from './SelectDynamicParkingLotsRow';
-import RoadworksRow from './RoadworksRow';
+import SelectRoadworksRow from './SelectRoadworksRow';
 import SelectChargingStationRow from './SelectChargingStationRow';
 
 function MarkerSelectPopup(props) {
@@ -57,6 +55,8 @@ function MarkerSelectPopup(props) {
           {...option.feature.properties}
           key={`citybike:${option.feature.properties.id}`}
           selectRow={() => props.selectRow(option)}
+          name={option.feature.properties.name}
+          desc={option.feature.properties.desc}
         />
       );
     }
@@ -112,7 +112,7 @@ function MarkerSelectPopup(props) {
     }
     if (option.layer === 'roadworks') {
       return (
-        <RoadworksRow
+        <SelectRoadworksRow
           {...option.feature}
           key={option.feature.properties.id}
           selectRow={() => props.selectRow(option)}
@@ -155,15 +155,6 @@ function MarkerSelectPopup(props) {
 }
 
 MarkerSelectPopup.displayName = 'MarkerSelectPopup';
-
-MarkerSelectPopup.description = (
-  <div className="popup">
-    <p>Renders a marker select popup</p>
-    <ComponentUsageExample description="">
-      <MarkerSelectPopup options={options} selectRow={() => {}} />
-    </ComponentUsageExample>
-  </div>
-);
 
 MarkerSelectPopup.propTypes = {
   options: PropTypes.array.isRequired,

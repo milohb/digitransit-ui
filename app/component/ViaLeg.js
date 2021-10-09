@@ -4,12 +4,12 @@ import moment from 'moment';
 import { FormattedMessage, intlShape } from 'react-intl';
 
 import Icon from './Icon';
-import ComponentUsageExample from './ComponentUsageExample';
 import { displayDistance } from '../util/geo-utils';
 import { durationToString } from '../util/timeUtils';
 import ItineraryCircleLineWithIcon from './ItineraryCircleLineWithIcon';
 import { isKeyboardSelectionEvent } from '../util/browser';
 import { splitStringToAddressAndPlace } from '../util/otpStrings';
+import DelayedTime from './DelayedTime';
 
 const getDescription = (mode, distance, duration) => {
   if (mode === 'BICYCLE_WALK') {
@@ -84,7 +84,11 @@ function ViaLeg(props, { config, intl }) {
         aria-hidden="true"
       >
         <div className="itinerary-time-column-time via-arrival-time">
-          {moment(props.arrivalTime).format('HH:mm')}
+          <DelayedTime
+            leg={props.previousLeg}
+            delay={props.previousLeg && props.previousLeg.arrivalDelay}
+            startTime={props.arrivalTime}
+          />
         </div>
         <div className="itinerary-time-column-time via-divider">
           <div className="via-divider-line" />
@@ -169,35 +173,6 @@ function ViaLeg(props, { config, intl }) {
   );
 }
 
-const exampleLeg = t1 => ({
-  duration: 438,
-  arrivalTime: t1,
-  startTime: t1 + 900000,
-  distance: 483.846,
-  mode: 'WALK',
-  from: { name: 'Messukeskus', stop: { code: '0613' } },
-});
-
-ViaLeg.description = () => {
-  const today = moment().hour(12).minute(34).second(0).valueOf();
-  return (
-    <div>
-      <p>
-        Displays an itinerary via leg. Note that the times are supposed to go on
-        top of the previous leg.
-      </p>
-      <ComponentUsageExample>
-        <ViaLeg
-          arrivalTime={today}
-          leg={exampleLeg(today)}
-          index={1}
-          focusAction={() => {}}
-        />
-      </ComponentUsageExample>
-    </div>
-  );
-};
-
 ViaLeg.propTypes = {
   arrivalTime: PropTypes.number.isRequired,
   leg: PropTypes.shape({
@@ -219,6 +194,9 @@ ViaLeg.propTypes = {
   focusAction: PropTypes.func.isRequired,
   focusToLeg: PropTypes.func.isRequired,
   children: PropTypes.node,
+  previousLeg: PropTypes.shape({
+    arrivalDelay: PropTypes.number,
+  }),
 };
 
 ViaLeg.contextTypes = {

@@ -17,7 +17,6 @@ import ServiceAlertIcon from './ServiceAlertIcon';
 import StopCode from './StopCode';
 import {
   getActiveAlertSeverityLevel,
-  legHasCancelation,
   tripHasCancelationForStop,
   getActiveLegAlerts,
   alertSeverityCompare,
@@ -32,6 +31,7 @@ import { shouldShowFareInfo } from '../util/fareUtils';
 import { AlertSeverityLevelType } from '../constants';
 import ZoneIcon from './ZoneIcon';
 import StopInfo from './StopInfo';
+import DelayedTime from './DelayedTime';
 
 class TransitLeg extends React.Component {
   constructor(props) {
@@ -59,9 +59,9 @@ class TransitLeg extends React.Component {
   };
 
   getZoneChange() {
-    const { leg } = this.props;
+    const { leg, nextInterliningLeg } = this.props;
     const startZone = leg.from.stop?.zoneId;
-    const endZone = leg.to.stop?.zoneId;
+    const endZone = nextInterliningLeg?.to?.stop?.zoneId || leg.to.stop.zoneId;
     if (
       startZone !== endZone &&
       !this.state.showIntermediateStops &&
@@ -102,7 +102,7 @@ class TransitLeg extends React.Component {
   }
 
   renderIntermediate() {
-    const { leg, mode } = this.props;
+    const { leg, mode, nextInterliningLeg } = this.props;
     if (
       leg.intermediatePlaces.length > 0 &&
       this.state.showIntermediateStops === true
@@ -125,7 +125,8 @@ class TransitLeg extends React.Component {
         const currentZoneId = place.stop.zoneId;
         const nextZoneId =
           (array[i + 1] && array[i + 1].stop.zoneId) ||
-          (isLastPlace && leg.to.stop.zoneId);
+          (isLastPlace && nextInterliningLeg?.to?.stop.zoneId) ||
+          leg.to.stop.zoneId;
         const previousZoneIdDiffers =
           previousZoneId && previousZoneId !== currentZoneId;
         const nextZoneIdDiffers = nextZoneId && nextZoneId !== currentZoneId;
@@ -174,18 +175,18 @@ class TransitLeg extends React.Component {
   }
 
   renderMain = () => {
-    const { children, focusAction, index, leg, mode, lang } = this.props;
+    const {
+      children,
+      focusAction,
+      index,
+      leg,
+      mode,
+      lang,
+      nextInterliningLeg,
+      omitDivider,
+    } = this.props;
     const { config, intl } = this.context;
-    const originalTime = leg.realTime &&
-      leg.departureDelay &&
-      leg.departureDelay >= config.itinerary.delayThreshold && [
-        <br key="br" />,
-        <span key="time" className="original-time">
-          {moment(leg.startTime)
-            .subtract(leg.departureDelay, 's')
-            .format('HH:mm')}
-        </span>,
-      ];
+
     const LegRouteName = leg.from.name?.concat(' - ').concat(leg.to.name);
     const modeClassName = mode.toLowerCase();
 
@@ -277,12 +278,11 @@ class TransitLeg extends React.Component {
           <span className="sr-only">{children}</span>
           <span aria-hidden="true">
             <div className="itinerary-time-column-time">
-              <span className={cx({ realtime: leg.realTime })}>
-                <span className={cx({ canceled: legHasCancelation(leg) })}>
-                  {moment(leg.startTime).format('HH:mm')}
-                </span>
-              </span>
-              {originalTime}
+              <DelayedTime
+                leg={leg}
+                delay={leg.departureDelay}
+                startTime={leg.startTime}
+              />
             </div>
             {zoneIcons}
           </span>
@@ -478,7 +478,11 @@ class TransitLeg extends React.Component {
                       severityLevel={alertSeverityLevel}
                     />
                   </div>
-                  <div className="description">{alert.header}</div>
+                  {config.showAlertHeader ? (
+                    <div className="description">{alert.header}</div>
+                  ) : (
+                    <div className="description">{alert.description}</div>
+                  )}
                   <Icon
                     img="icon-icon_arrow-collapse--right"
                     className="disruption-link-arrow"
@@ -488,13 +492,24 @@ class TransitLeg extends React.Component {
               </div>
             </div>
           )}
-          {this.props.nextInterliningLeg ? (
+          {nextInterliningLeg ? (
             <div className="interline-info-container">
               <Icon img="icon-icon_wait" />
               <FormattedMessage
                 id="itinerary-summary.interline-wait"
                 values={{
-                  stop: <span className="bold">{leg.to.name}</span>,
+                  shortName: (
+                    <span className="bold">
+                      {nextInterliningLeg.route.shortName}
+                    </span>
+                  ),
+                  destination: (
+                    <span className="bold">
+                      {nextInterliningLeg.trip.tripHeadsign ||
+                        getHeadsignFromRouteLongName(nextInterliningLeg.route)}
+                    </span>
+                  ),
+                  stop: leg.to.name,
                   time: (
                     <span className="bold">
                       {durationToString(this.props.interliningWait)}
@@ -504,7 +519,7 @@ class TransitLeg extends React.Component {
               />
             </div>
           ) : (
-            <div className="divider" />
+            !omitDivider && <div className="divider" />
           )}
           <LegAgencyInfo leg={leg} />
           <div>
@@ -530,19 +545,20 @@ class TransitLeg extends React.Component {
               </div>
               <div className="ticket-info">
                 <div className="accent">{LegRouteName}</div>
-                {leg.fare.agency && (
-                  <React.Fragment>
-                    <div>{leg.fare.agency.name}</div>
-                    {leg.fare.agency.fareUrl && (
-                      <ExternalLink
-                        className="agency-link"
-                        href={leg.fare.agency.fareUrl}
-                      >
-                        {intl.formatMessage({ id: 'extra-info' })}
-                      </ExternalLink>
-                    )}
-                  </React.Fragment>
-                )}
+                {leg.fare.agency &&
+                  !config.hideExternalOperator(leg.fare.agency) && (
+                    <React.Fragment>
+                      <div>{leg.fare.agency.name}</div>
+                      {leg.fare.agency.fareUrl && (
+                        <ExternalLink
+                          className="agency-link"
+                          href={leg.fare.agency.fareUrl}
+                        >
+                          {intl.formatMessage({ id: 'extra-info' })}
+                        </ExternalLink>
+                      )}
+                    </React.Fragment>
+                  )}
               </div>
             </div>
           )}
@@ -597,11 +613,13 @@ TransitLeg.propTypes = {
       gtfsId: PropTypes.string.isRequired,
       shortName: PropTypes.string,
       color: PropTypes.string,
+      alerts: PropTypes.array,
       type: PropTypes.number,
     }).isRequired,
     to: PropTypes.shape({
       stop: PropTypes.shape({
         zoneId: PropTypes.string,
+        alerts: PropTypes.array,
       }).isRequired,
       name: PropTypes.string.isRequired,
     }).isRequired,
@@ -640,7 +658,18 @@ TransitLeg.propTypes = {
         }).isRequired,
       }),
     ).isRequired,
+    route: PropTypes.shape({
+      shortName: PropTypes.string,
+    }).isRequired,
+    trip: PropTypes.shape({
+      tripHeadsign: PropTypes.string.isRequired,
+    }).isRequired,
     endTime: PropTypes.number.isRequired,
+    to: PropTypes.shape({
+      stop: PropTypes.shape({
+        zoneId: PropTypes.string,
+      }).isRequired,
+    }).isRequired,
   }),
   index: PropTypes.number.isRequired,
   mode: PropTypes.string.isRequired,
@@ -648,6 +677,11 @@ TransitLeg.propTypes = {
   focusAction: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   lang: PropTypes.string.isRequired,
+  omitDivider: PropTypes.bool,
+};
+
+TransitLeg.defaultProps = {
+  omitDivider: false,
 };
 
 TransitLeg.contextTypes = {

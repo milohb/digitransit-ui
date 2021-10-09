@@ -4,7 +4,11 @@ import pick from 'lodash/pick';
 
 import range from 'lodash-es/range';
 import { isBrowser } from '../../../util/browser';
-import { drawIcon, drawStopIcon } from '../../../util/mapIconUtils';
+import {
+  drawAvailabilityBadge,
+  drawIcon,
+  getMemoizedStopIcon,
+} from '../../../util/mapIconUtils';
 import glfun from '../../../util/glfun';
 
 const getScale = glfun({
@@ -15,6 +19,25 @@ const getScale = glfun({
   ],
 });
 
+const BikeParkingType = {
+  Unknown: {
+    icon: 'bike-park',
+    smallIconZoom: 17,
+  },
+  Lockers: {
+    icon: 'bike-park-lockers',
+    smallIconZoom: 15,
+  },
+  Station: {
+    icon: 'bike-park-station',
+    smallIconZoom: 15,
+  },
+  Covered: {
+    icon: 'bike-park-covered',
+    smallIconZoom: 15,
+  },
+};
+
 class BikeParks {
   constructor(tile, config) {
     this.tile = tile;
@@ -22,6 +45,8 @@ class BikeParks {
 
     this.scaleratio = (isBrowser && window.devicePixelRatio) || 1;
     this.iconSize = 20 * this.scaleratio * getScale(this.tile.coords.z);
+    this.availabilityImageSize =
+      14 * this.scaleratio * getScale(this.tile.coords.z);
 
     this.promise = this.fetchWithAction(this.drawStatus);
   }
@@ -67,28 +92,69 @@ class BikeParks {
     });
 
   static getIcon = ({ tags }) => {
-    const covered = tags.split(',').includes('osm:covered');
-    if (covered) {
-      return `icon-bike-park-covered`;
-    }
-    return `icon-bike-park`;
+    const type = BikeParks.getBikeParkType(tags);
+    return `icon-${type.icon}`;
   };
 
-  drawStatus = ({ geom, properties }) => {
-    if (this.tile.coords.z <= this.config.bikeParks.smallIconZoom) {
-      return drawStopIcon(
-        this.tile,
-        geom,
-        'bike-park',
-        null,
-        null,
-        null,
-        this.config.colors.iconColors,
-      );
+  static getBikeParkType = tags => {
+    const splitTags = tags.split(',');
+    const covered = splitTags.includes('osm:covered');
+    const garage =
+      splitTags.includes('osm:bicycle_parking=shed') ||
+      splitTags.includes('osm:bicycle_parking=garage');
+    const lockers = splitTags.includes('osm:bicycle_parking=lockers');
+    if (lockers) {
+      return BikeParkingType.Lockers;
     }
+    if (garage) {
+      return BikeParkingType.Station;
+    }
+    if (covered) {
+      return BikeParkingType.Covered;
+    }
+    return BikeParkingType.Unknown;
+  };
 
-    const icon = BikeParks.getIcon(properties);
-    return drawIcon(icon, this.tile, geom, this.iconSize);
+  static getAvailability(properties) {
+    const available = properties['availability.bicyclePlaces'];
+    if (available === 0) {
+      return 'no';
+    }
+    /* if (available === 1) {
+      return 'poor';
+    } */
+    return 'good';
+  }
+
+  drawStatus = ({ geom, properties }) => {
+    const type = BikeParks.getBikeParkType(properties.tags);
+    if (this.tile.coords.z <= type.smallIconZoom) {
+      const mode = `mode-bike-park`;
+      const color = this.config.colors.iconColors[mode];
+      let width = 10;
+      width *= this.tile.scaleratio;
+
+      const radius = width / 2;
+      const x = geom.x / this.tile.ratio - radius;
+      const y = geom.y / this.tile.ratio - radius;
+      getMemoizedStopIcon(type, radius, color, false).then(image => {
+        this.tile.ctx.drawImage(image, x, y);
+      });
+    } else {
+      const icon = BikeParks.getIcon(properties);
+      drawIcon(icon, this.tile, geom, this.iconSize).then(() => {
+        if (typeof properties['availability.bicyclePlaces'] === 'number') {
+          drawAvailabilityBadge(
+            BikeParks.getAvailability(properties),
+            this.tile,
+            geom,
+            this.iconSize,
+            this.availabilityImageSize,
+            this.scaleratio,
+          );
+        }
+      });
+    }
   };
 
   onTimeChange = () => {

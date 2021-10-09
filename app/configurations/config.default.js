@@ -1,15 +1,16 @@
 /* eslint-disable prefer-template */
 import safeJsonParse from '../util/safeJsonParser';
 import { BIKEAVL_WITHMAX } from '../util/citybikes';
+import { BicycleParkingFilter } from '../constants';
 
 const CONFIG = process.env.CONFIG || 'default';
 const API_URL = process.env.API_URL || 'https://dev-api.digitransit.fi';
 const GEOCODING_BASE_URL = `${API_URL}/geocoding/v1`;
 const MAP_URL =
   process.env.MAP_URL || 'https://digitransit-dev-cdn-origin.azureedge.net';
-const MAP_PATH_PREFIX = process.env.MAP_PATH_PREFIX || 'next-'; // TODO maybe use regular endpoint again at some point
+const MAP_PATH_PREFIX = process.env.MAP_PATH_PREFIX || '';
 const APP_PATH = process.env.APP_CONTEXT || '';
-const { SENTRY_DSN } = process.env;
+const { SENTRY_DSN, AXE, NODE_ENV } = process.env;
 const PORT = process.env.PORT || 8080;
 const APP_DESCRIPTION = 'Digitransit journey planning UI';
 const OTP_TIMEOUT = process.env.OTP_TIMEOUT || 12000;
@@ -21,7 +22,9 @@ const REALTIME_PATCH = safeJsonParse(process.env.REALTIME_PATCH) || {};
 export default {
   SENTRY_DSN,
   PORT,
+  AXE,
   CONFIG,
+  NODE_ENV,
   OTPTimeout: OTP_TIMEOUT,
   URL: {
     API_URL,
@@ -29,8 +32,8 @@ export default {
     MAP_URL,
     OTP: process.env.OTP_URL || `${API_URL}/routing/v1/routers/finland/`,
     MAP: {
-      default: `${MAP_URL}/map/v1/${MAP_PATH_PREFIX}hsl-map/`,
-      sv: `${MAP_URL}/map/v1/${MAP_PATH_PREFIX}hsl-map-sv/`,
+      default: `${MAP_URL}/map/v1/${MAP_PATH_PREFIX}hsl-map/{z}/{x}/{y}{r}.png`,
+      sv: `${MAP_URL}/map/v1/${MAP_PATH_PREFIX}hsl-map-sv/{z}/{x}/{y}{r}.png`,
     },
     STOP_MAP: `${MAP_URL}/map/v1/finland-stop-map/`,
     CITYBIKE_MAP: `${MAP_URL}/map/v1/finland-citybike-map/`,
@@ -45,7 +48,7 @@ export default {
     }/place`,
     ROUTE_TIMETABLES: {
       HSL: `${API_URL}/timetables/v1/hsl/routes/`,
-      tampere: 'http://nysse.fi/media/aikataulut/',
+      tampere: 'https://www.nysse.fi/aikataulut-ja-reitit/linjat/',
     },
     STOP_TIMETABLES: {
       HSL: `${API_URL}/timetables/v1/hsl/stops/`,
@@ -106,18 +109,29 @@ export default {
 
   omitNonPickups: true,
   maxNearbyStopAmount: 5,
-  maxNearbyStopDistance: 2000,
+  maxNearbyStopRefetches: 5,
+  maxNearbyStopDistance: {
+    favorite: 100000,
+    bus: 100000,
+    tram: 100000,
+    subway: 100000,
+    rail: 100000,
+    ferry: 100000,
+    citybike: 100000,
+    airplane: 200000,
+  },
 
   defaultSettings: {
     accessibilityOption: 0,
     bikeSpeed: 5.55,
+    bicycleParkingFilter: BicycleParkingFilter.All,
     ticketTypes: 'none',
     walkBoardCost: 600,
     walkReluctance: 2,
     walkSpeed: 1.2,
     includeBikeSuggestions: true,
-    includeParkAndRideSuggestions: true,
-    includeCarSuggestions: true,
+    includeParkAndRideSuggestions: false,
+    includeCarSuggestions: false,
   },
 
   /**
@@ -145,6 +159,8 @@ export default {
   walkBoardCost: 600,
   walkBoardCostHigh: 1200,
 
+  parkAndRideBannedVehicleParkingTags: [],
+
   maxWalkDistance: 10000,
   suggestBikeMaxDistance: 30000,
   // max walking distance in bike and public transport
@@ -162,6 +178,7 @@ export default {
   minTransferTime: 120,
   optimize: 'GREENWAYS',
   transferPenalty: 0,
+  unpreferredBicycleParkingTagPenalty: 900,
   availableLanguages: ['fi', 'sv', 'en', 'fr', 'nb', 'de', 'da', 'es', 'ro'],
   defaultLanguage: 'en',
   // This timezone data will expire in 2037
@@ -339,6 +356,7 @@ export default {
     keywords: 'digitransit',
   },
 
+  hideExternalOperator: () => false,
   // Ticket information feature toggle
   showTicketInformation: false,
   ticketInformation: {
@@ -692,6 +710,10 @@ export default {
     oulu: 'oulu',
     hameenlinna: 'hameenlinna',
     matka: 'matka',
+    bar: '(bar|hamburg)',
+    landstadtmobil: 'landstadtmobil',
+    engstingen: 'engstingen',
+    muensingen: 'muensingen',
     vaasa: 'vaasa',
     walttiOpas: 'waltti',
     rovaniemi: 'rovaniemi',
@@ -741,10 +763,27 @@ export default {
   availableTickets: {},
   /* Option to disable TimeTableOptionsPanel component on Route panel */
   showTimeTableOptions: true,
+
+  // the route to stop button in when you select an individual stop/bike rental station
+  showMapRoutingButton: true,
+
   zones: {
     stops: false,
     itinerary: false,
   },
 
   viaPointsEnabled: true,
+
+  // DT-4802 Toggling this off shows the alert bodytext instead of the header
+  showAlertHeader: true,
+
+  showSimilarRoutesOnRouteDropDown: false,
+
+  prioritizedStopsNearYou: {},
+
+  welcomePopup: {
+    enabled: false,
+    heading: 'Welcome to Digitransit',
+    paragraphs: [],
+  },
 };

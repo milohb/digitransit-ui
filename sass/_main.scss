@@ -44,7 +44,6 @@ $body-font-weight: $font-weight-medium;
 @import '../app/component/generic-table';
 @import '../app/component/favourite-icon-table';
 @import '../app/component/nolocation-panel';
-@import '../app/component/documentation';
 @import '../app/component/timetable';
 @import '../app/component/visual/index';
 @import '../app/component/departures-table.scss';
@@ -72,3 +71,11 @@ $body-font-weight: $font-weight-medium;
 
 // And these application specific styles use Foundation variables,
 // so they have to be loaded afterwards
+
+@import 'stadtnavi-extensions/dynamic-parking-lots';
+@import 'stadtnavi-extensions/charging-station-content';
+@import "stadtnavi-extensions/cargo-bike-content";
+@import 'stadtnavi-extensions/sidebar-container';
+@import 'stadtnavi-extensions/opening-hours';
+@import 'stadtnavi-extensions/layer-category-dropdown';
+@import 'stadtnavi-extensions/welcome-modal';

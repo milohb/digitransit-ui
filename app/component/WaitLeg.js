@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment';
 import Link from 'found/Link';
 import { FormattedMessage, intlShape } from 'react-intl';
-import ComponentUsageExample from './ComponentUsageExample';
 import Icon from './Icon';
 import { durationToString } from '../util/timeUtils';
 import ItineraryCircleLineWithIcon from './ItineraryCircleLineWithIcon';
 import { isKeyboardSelectionEvent } from '../util/browser';
 import { PREFIX_STOPS } from '../util/path';
+import DelayedTime from './DelayedTime';
 
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 function WaitLeg(
-  { children, leg, startTime, waitTime, focusAction, index },
+  { children, leg, startTime, waitTime, focusAction, index, previousLeg },
   { config, intl },
 ) {
   const modeClassName = 'wait';
@@ -28,7 +27,11 @@ function WaitLeg(
       </span>
       <div className="small-2 columns itinerary-time-column" aria-hidden="true">
         <div className="itinerary-time-column-time">
-          {moment(startTime).format('HH:mm')}
+          <DelayedTime
+            leg={previousLeg}
+            delay={previousLeg && previousLeg.arrivalDelay}
+            startTime={startTime}
+          />
         </div>
       </div>
       <ItineraryCircleLineWithIcon
@@ -106,33 +109,6 @@ function WaitLeg(
   );
 }
 
-const exampleLeg = () => ({
-  to: {
-    name: 'Ilmattarentie',
-    stop: { gtfsId: 'FOO:123' },
-  },
-});
-
-WaitLeg.description = () => {
-  const today = moment().hour(12).minute(34).second(0).valueOf();
-  const leg = exampleLeg();
-  const duration = moment.duration(17, 'minutes').asMilliseconds();
-  return (
-    <div>
-      <p>Displays an itinerary wait leg.</p>
-      <ComponentUsageExample>
-        <WaitLeg
-          startTime={today}
-          focusAction={() => {}}
-          waitTime={duration}
-          leg={leg}
-          index={1}
-        />
-      </ComponentUsageExample>
-    </div>
-  );
-};
-
 WaitLeg.propTypes = {
   startTime: PropTypes.number.isRequired,
   focusAction: PropTypes.func.isRequired,
@@ -153,6 +129,10 @@ WaitLeg.propTypes = {
       }),
     }).isRequired,
   }).isRequired,
+  previousLeg: PropTypes.shape({
+    realTime: PropTypes.bool.isRequired,
+    arrivalDelay: PropTypes.number,
+  }),
 };
 
 WaitLeg.contextTypes = {

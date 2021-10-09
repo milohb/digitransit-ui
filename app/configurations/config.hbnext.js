@@ -41,7 +41,7 @@ export default configMerger(walttiConfig, {
         CITYBIKE_MAP: `${API_URL}/routing/v1/router/vectorTiles/citybikes/`,
         BIKE_PARKS_MAP: `${API_URL}/routing/v1/router/vectorTiles/parking/`,
         WEATHER_STATIONS_MAP: `${API_URL}/map/v1/weather-stations/`,
-        CHARGING_STATIONS_MAP: `https://ochp.next-site.de/tiles/`,
+        CHARGING_STATIONS_MAP: `${API_URL}/tiles/charging-stations/`,
         PELIAS: `${process.env.GEOCODING_BASE_URL || GEOCODING_BASE_URL}/search`,
         PELIAS_REVERSE_GEOCODER: `${
             process.env.GEOCODING_BASE_URL || GEOCODING_BASE_URL
@@ -579,6 +579,12 @@ export default configMerger(walttiConfig, {
         ],
     },
     staticMessagesUrl: STATIC_MESSAGE_URL,
+
+    parkAndRideBannedVehicleParkingTags: [
+        'lot_type:Parkplatz',
+        'lot_type:Tiefgarage',
+        'lot_type:Parkhaus'
+    ],
 
     suggestCarMinDistance: 800,
     suggestWalkMaxDistance: 3000,
