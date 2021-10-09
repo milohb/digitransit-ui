@@ -2042,53 +2042,6 @@
                                         "ofType": null
                                     },
                                     "defaultValue": null
-                                },
-                                {
-                                    "name": "useVehicleParkingAvailabilityInformation",
-                                    "description": "",
-                                    "type": {
-                                        "kind": "SCALAR",
-                                        "name": "Boolean",
-                                        "ofType": null
-                                    },
-                                    "defaultValue": null
-                                },
-                                {
-                                    "name": "bannedVehicleParkingTags",
-                                    "description": "",
-                                    "type": {
-                                        "kind": "LIST",
-                                        "name": null,
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "String",
-                                            "ofType": null
-                                        }
-                                    },
-                                    "defaultValue": null
-                                },
-                                {
-                                    "name": "preferredVehicleParkingTags",
-                                    "description": "",
-                                    "type": {
-                                        "kind": "LIST",
-                                        "name": null,
-                                        "ofType": {
-                                            "kind": "SCALAR",
-                                            "name": "String",
-                                            "ofType": null
-                                        }
-                                    },
-                                    "defaultValue": null
-                                },
-                                {
-                                    "name": "unpreferredVehicleParkingTagPenalty",
-                                    "description": "",
-                                    "type": {
-                                        "kind": "SCALAR",
-                                        "name": "Float"
-                                    },
-                                    "defaultValue": null
                                 }
                             ],
                             "type": {

@@ -224,7 +224,6 @@ export const preparePlanParams = (config, useDefaultModes) => (
         time,
         locale,
         useCarParkAvailabilityInformation,
-        bannedVehicleParkingTags,
       },
     },
   },
@@ -336,15 +335,6 @@ export const preparePlanParams = (config, useDefaultModes) => (
         ),
         locale: locale || cookies.get('lang') || 'fi',
         useCarParkAvailabilityInformation,
-        useVehicleParkingAvailabilityInformation: isDepartureTimeWithin15Minutes(
-          parsedTime,
-        ),
-
-        bannedVehicleParkingTags: bannedVehicleParkingTags
-          ? [bannedVehicleParkingTags].concat(
-              config.parkAndRideBannedVehicleParkingTags,
-            )
-          : config.parkAndRideBannedVehicleParkingTags,
       },
       nullOrUndefined,
     ),

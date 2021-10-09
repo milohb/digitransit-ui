@@ -151,22 +151,6 @@ function CarLeg(props, { config, intl, router, match, executeAction }) {
               />
               <FormattedMessage id="car-park-capacity-alert" />
             </div>
-            <div className="carparks-exclude-container">
-              <button
-                type="button"
-                className="standalone-btn cursor-pointer carparks-exclude-btn"
-                onClick={() => {
-                  replaceQueryParams(router, match, {
-                    bannedVehicleParkingTags: 'state:few',
-                  });
-                }}
-              >
-                <FormattedMessage
-                  id="exclude-full-carparks"
-                  defaultMessage="Exclude full car parks"
-                />
-              </button>
-            </div>
           </div>
         )}
       </div>

@@ -387,9 +387,6 @@ const containerComponent = createFragmentContainer(
         startTime
         endTime
         legs {
-          alerts {
-            alertId
-          }
           realTime
           departureDelay
           realtimeState

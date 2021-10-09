@@ -575,11 +575,9 @@ class SummaryPage extends React.Component {
         $bikeAndPublicModes: [TransportMode!]
         $bikeParkModes: [TransportMode!]
         $carParkModes: [TransportMode!]
-        $bannedVehicleParkingTags: [String]
         $bannedBicycleParkingTags: [String]
         $preferredBicycleParkingTags: [String]
         $unpreferredBicycleParkingTagPenalty: Float
-        $useVehicleParkingAvailabilityInformation: Boolean
       ) {
         walkPlan: plan(
           fromPlace: $fromPlace
@@ -790,9 +788,6 @@ class SummaryPage extends React.Component {
           itineraryFiltering: $itineraryFiltering
           unpreferred: $unpreferred
           locale: $locale
-          bannedVehicleParkingTags: $bannedBicycleParkingTags
-          preferredVehicleParkingTags: $preferredBicycleParkingTags
-          unpreferredVehicleParkingTagPenalty: $unpreferredBicycleParkingTagPenalty
         ) @include(if: $showBikeAndParkItineraries) {
           ...SummaryPlanContainer_plan
           ...ItineraryTab_plan
@@ -932,8 +927,6 @@ class SummaryPage extends React.Component {
           unpreferred: $unpreferred
           carReluctance: 10
           locale: $locale
-          useVehicleParkingAvailabilityInformation: $useVehicleParkingAvailabilityInformation
-          bannedVehicleParkingTags: $bannedVehicleParkingTags
         ) @include(if: $shouldMakeParkRideQuery) {
           ...SummaryPlanContainer_plan
           ...ItineraryTab_plan
@@ -2810,7 +2803,6 @@ const containerComponent = createRefetchContainer(
         allowedBikeRentalNetworks: { type: "[String]" }
         locale: { type: "String" }
         useCarParkAvailabilityInformation: { type: "Boolean" }
-        useVehicleParkingAvailabilityInformation: { type: "Boolean" }
       ) {
         plan(
           fromPlace: $fromPlace
