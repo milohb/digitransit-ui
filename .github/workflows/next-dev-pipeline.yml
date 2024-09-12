@@ -235,7 +235,7 @@ jobs:
 #    steps:
 #      - uses: actions/checkout@v2
 #      - name: Publish to Dockerhub
-#        uses: elgohr/Publish-Docker-Github-Action@master
+#        uses: elgohr/Publish-Docker-Github-Action@v5
 #        with:
 #          path: '**/node_modules'
 #          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
@@ -272,7 +272,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: echo -e "export const COMMIT_ID = \"${GITHUB_SHA}\";\nexport const BUILD_TIME = \""`date -Iminutes -u`"\";" > app/buildInfo.js
       - name: Publish to Dockerhub
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: stadtnavi/digitransit-ui
           username: ${{ secrets.DOCKER_USER }}
